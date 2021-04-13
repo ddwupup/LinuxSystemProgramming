@@ -9,6 +9,36 @@
 #include<unistd.h>
 #include<dirent.h>
 
+void print_mode(unsigned int mode)
+{
+	switch(mode){
+		case 0:
+			printf("---");
+			break;
+		case 1: 
+			printf("--x");
+			break;
+		case 2:
+                        printf("-w-");
+                        break;
+                case 3:
+                        printf("-wx");
+                        break;
+		case 4:
+                        printf("r--");
+                        break;
+                case 5:
+                        printf("r-x");
+                        break;
+		case 6:
+                        printf("rw-");
+                        break;
+                case 7:
+                        printf("rwx");
+                        break;
+	}
+}
+
 int main(void)
 {
 	DIR *dir;
@@ -23,8 +53,8 @@ int main(void)
 
 	//read the dirent one by one
 	while((dirp = readdir(dir)) != NULL){
-		if((dirp->d_name == ".") || (dirp->d_name == ".."))
-			continue;
+		//if((dirp->d_name == ".") || (dirp->d_name == ".."))
+		//	continue;
 		//print the type of the file
 		switch(dirp->d_type){
 			case DT_BLK:
@@ -51,7 +81,6 @@ int main(void)
                         default:
 				printf(" ");
                                 break;
-
 		}
 
 		sprintf(path,"%s/%s",rootpath,dirp->d_name);
@@ -60,16 +89,23 @@ int main(void)
 			exit(-1);
 		}
 		//print the mode
-		printf("");
+		print_mode(file_stat->st_mode & 0700/(8*8));
+		print_mode(file_stat->st_mode & 0070/8);
+		print_mode(file_stat->st_mode & 0007);
+
+		//print links,Gid,Uid
+		printf(" %lu  %u   %u   ",file_stat->st_nlink,file_stat->st_gid,file_stat->st_uid);
+
 		//print the Gid
-	
+			
 		//print the Uid
 			
 
 		//print the mtime
-		
+		printf("%lu   ",file_stat->st_ctime);
 
-		//print the file_name	
+		//print the file_name
+		printf("%s \n",dirp->d_name);	
 	}
 
 

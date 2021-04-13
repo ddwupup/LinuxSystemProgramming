@@ -9,28 +9,24 @@
 #include<unistd.h>
 #include<dirent.h>
 
-int main(int argc,char *argv[])
+int main(void)
 {
-	char *path;
 	DIR *dir;
-	struct dirent *item;
-
-	if(argc < 2){
-		*path = "./";
-	}else{
-		*path = argv[1];
-	}
-
-	dir = opendir(path);
-	if(dir == NULL){
+	struct dirent *dirp;
+	char path[1024];
+	char *rootpath = ".";
+	struct stat *file_stat;
+	
+	if((dir = opendir(rootpath)) == NULL){
 		perror("opendir");
-		exit(-1);
 	}
 
 	//read the dirent one by one
-	while((item = readdir(dir) != NULL)){
+	while((dirp = readdir(dir)) != NULL){
+		if((dirp->d_name == ".") || (dirp->d_name == ".."))
+			continue;
 		//print the type of the file
-		switch(item->d_type){
+		switch(dirp->d_type){
 			case DT_BLK:
 				printf("b");
 				break;
@@ -58,8 +54,13 @@ int main(int argc,char *argv[])
 
 		}
 
+		sprintf(path,"%s/%s",rootpath,dirp->d_name);
+		if(stat(path,file_stat) == -1){
+			perror("stat");
+			exit(-1);
+		}
 		//print the mode
-		
+		printf("");
 		//print the Gid
 	
 		//print the Uid
@@ -74,7 +75,7 @@ int main(int argc,char *argv[])
 
 
 
-
+	closedir(dir);
 
 	return 0;
 }

@@ -9,6 +9,35 @@
 #include<unistd.h>
 #include<dirent.h>
 
+void printf_type(unsigned char type)
+{
+	switch(type){
+		case DT_BLK:
+			printf("b");
+			break;
+		case DT_CHR:
+            printf("c");
+			break;
+		case DT_DIR:
+            printf("d");
+            break;
+		case DT_FIFO:
+            printf("f");
+            break;
+		case DT_LNK:
+            printf("l");
+            break;
+        case DT_REG:
+            printf("-");
+            break;
+        case DT_SOCK:
+            printf("s");
+            break;
+        default:
+			printf(" ");
+            break;
+		}
+}
 void print_mode(unsigned int mode)
 {
 	switch(mode){
@@ -19,23 +48,23 @@ void print_mode(unsigned int mode)
 			printf("--x");
 			break;
 		case 2:
-                        printf("-w-");
-                        break;
-                case 3:
-                        printf("-wx");
-                        break;
+            printf("-w-");
+            break;
+        case 3:
+            printf("-wx");
+            break;
 		case 4:
-                        printf("r--");
-                        break;
-                case 5:
-                        printf("r-x");
-                        break;
+            printf("r--");
+            break;
+        case 5:
+            printf("r-x");
+            break;
 		case 6:
-                        printf("rw-");
-                        break;
-                case 7:
-                        printf("rwx");
-                        break;
+            printf("rw-");
+            break;
+        case 7:
+            printf("rwx");
+            break;
 	}
 }
 
@@ -56,32 +85,7 @@ int main(void)
 		//if((dirp->d_name == ".") || (dirp->d_name == ".."))
 		//	continue;
 		//print the type of the file
-		switch(dirp->d_type){
-			case DT_BLK:
-				printf("b");
-				break;
-			case DT_CHR:
-                                printf("c");
-				break;
-			case DT_DIR:
-                                printf("d");
-                                break;
-			case DT_FIFO:
-                                printf("f");
-                                break;
-			case DT_LNK:
-                                printf("l");
-                                break;
-                        case DT_REG:
-                                printf("-");
-                                break;
-                        case DT_SOCK:
-                                printf("s");
-                                break;
-                        default:
-				printf(" ");
-                                break;
-		}
+		printf_type(dirp->d_type);
 
 		sprintf(path,"%s/%s",rootpath,dirp->d_name);
 		if(stat(path,file_stat) == -1){
@@ -93,13 +97,8 @@ int main(void)
 		print_mode(file_stat->st_mode & 0070/8);
 		print_mode(file_stat->st_mode & 0007);
 
-		//print links,Gid,Uid
+		//print links,Gid,Uid , can find the user name by file passwd 
 		printf(" %lu  %u   %u   ",file_stat->st_nlink,file_stat->st_gid,file_stat->st_uid);
-
-		//print the Gid
-			
-		//print the Uid
-			
 
 		//print the mtime
 		printf("%lu   ",file_stat->st_ctime);
@@ -108,10 +107,6 @@ int main(void)
 		printf("%s \n",dirp->d_name);	
 	}
 
-
-
-
 	closedir(dir);
-
 	return 0;
 }

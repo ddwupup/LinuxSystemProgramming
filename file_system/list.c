@@ -1,5 +1,5 @@
 /*
-*ls -l <dir_path>
+ *ls -l <dir_path>
  * mode links Uid Gid Size mtime filename
  * */
 #include<sys/types.h>
